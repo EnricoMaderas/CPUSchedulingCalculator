@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU Scheduling Calculator - Dark Mode</title>
+<style>
+body {
+font-family: Arial, Helvetica, sans-serif;
+background-color: #121212;
+color: #e0e0e0;
+margin: 0;
+padding: 20px;
+}
+
+.container {
+max-width: 850px;
+margin: 0 auto;
+background-color: #1e1e1e;
+padding: 25px;
+border-radius: 6px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+border-top: 5px solid #3b82f6;
+}
+
+header {
+border-bottom: 2px solid #2d2d2d;
+padding-bottom: 15px;
+margin-bottom: 20px;
+}
+
+header h1 {
+margin: 0 0 12px 0;
+color: #60a5fa;
+font-size: 26px;
+}
+
+.course-meta {
+display: flex;
+align-items: center;
+gap: 16px;
+font-size: 13px;
+color: #a0a0a0;
+}
+
+.course-info-group {
+display: flex;
+flex-direction: column;
+gap: 6px;
+align-items: flex-start;
+}
+
+.course-tag {
+background-color: #27272a;
+color: #e4e4e7;
+padding: 4px 10px;
+border-radius: 4px;
+border: 1px solid #3f3f46;
+font-weight: 600;
+letter-spacing: 0.3px;
+display: inline-block;
+}
+
+.divider-slash {
+color: #38bdf8;
+font-size: 36px;
+font-weight: 300;
+line-height: 1;
+user-select: none;
+text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+margin: 0 4px;
+}
+
+.submission-badge {
+display: inline-block;
+background: rgba(56, 189, 248, 0.08);
+color: #38bdf8;
+border: 2px dashed #38bdf8;
+padding: 6px 14px;
+border-radius: 8px;
+font-weight: bold;
+letter-spacing: 0.5px;
+box-shadow: 0 0 10px rgba(56, 189, 248, 0.25), inset 0 0 8px rgba(56, 189, 248, 0.15);
+text-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+}
+
+.controls-section {
+background-color: #252525;
+padding: 15px;
+border: 1px solid #333333;
+border-radius: 4px;
+margin-bottom: 20px;
+}
+
+.form-group {
+margin-bottom: 12px;
+}
+
+label {
+font-weight: bold;
+display: inline-block;
+width: 160px;
+font-size: 14px;
+color: #e0e0e0;
+}
+
+select, input[type="number"] {
+padding: 6px 10px;
+border: 1px solid #444444;
+background-color: #2d2d2d;
+color: #ffffff;
+border-radius: 3px;
+font-size: 14px;
+}
+
+select:focus, input[type="number"]:focus {
+outline: 1px solid #60a5fa;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 15px;
+margin-bottom: 15px;
+}
+
+table, th, td {
+border: 1px solid #333333;
+}
+
+th {
+background-color: #2a2a2a;
+color: #93c5fd;
+padding: 10px;
+font-size: 14px;
+text-align: center;
+}
+
+td {
+padding: 8px;
+text-align: center;
+font-size: 14px;
+background-color: #1e1e1e;
+}
+
+.input-table input {
+width: 70px;
+text-align: center;
+}
+
+.btn {
+padding: 8px 16px;
+font-size: 14px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-weight: bold;
+margin-right: 5px;
+transition: background-color 0.2s;
+}
+
+.btn-add { background-color: #4b5563; color: white; }
+.btn-add:hover { background-color: #374151; }
+
+.btn-calc { background-color: #2563eb; color: white; }
+.btn-calc:hover { background-color: #1d4ed8; }
+
+.btn-remove { background-color: #dc2626; color: white; padding: 4px 8px; font-size: 12px; }
+.btn-remove:hover { background-color: #b91c1c; }
+
+.results-section {
+margin-top: 25px;
+border-top: 2px dashed #333333;
+padding-top: 20px;
+}
+
+.gantt-title {
+font-weight: bold;
+margin-bottom: 10px;
+color: #60a5fa;
+}
+
+.gantt-chart {
+display: flex;
+flex-wrap: wrap;
+margin-bottom: 20px;
+border: 1px solid #333333;
+padding: 5px;
+background-color: #141414;
+}
+
+.gantt-item {
+background-color: #1d4ed8;
+color: #ffffff;
+padding: 8px 12px;
+margin: 2px;
+text-align: center;
+border-radius: 3px;
+font-size: 13px;
+min-width: 45px;
+border: 1px solid #3b82f6;
+}
+
+.gantt-item small {
+display: block;
+font-size: 10px;
+margin-top: 3px;
+color: #bfdbfe;
+}
+
+.averages-box {
+background-color: #1e293b;
+border-left: 4px solid #3b82f6;
+padding: 12px 15px;
+margin-top: 15px;
+}
+
+.averages-box p {
+margin: 5px 0;
+font-size: 15px;
+color: #e2e8f0;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+<h1>CPU Scheduling Calculator</h1>
+<div class="course-meta">
+<div class="course-info-group">
+<span class="course-tag">IT ELEC 3</span>
+<span class="course-tag">Platform Technologies</span>
+<span class="course-tag">10-2-26</span>
+</div>
+<span class="divider-slash">/</span>
+<span class="submission-badge">Submitted by: Maderas, Enrico D. (Solo)</span>
+</div>
+</header>
+
+<div class="controls-section">
+<div class="form-group">
+<label for="algorithm">Select Algorithm:</label>
+<select id="algorithm" onchange="checkAlgorithm()">
+<option value="FCFS">First Come First Serve (FCFS)</option>
+<option value="SJF">Shortest Job First (SJF - Non Preemptive)</option>
+<option value="RR">Round Robin (RR)</option>
+</select>
+</div>
+
+<div class="form-group" id="quantumGroup" style="display: none;">
+<label for="timeQuantum">Time Quantum:</label>
+<input type="number" id="timeQuantum" value="2" min="1">
+</div>
+</div>
+
+<h3>Process Table</h3>
+<table class="input-table" id="processInputTable">
+<thead>
+<tr>
+<th>Process ID</th>
+<th>Arrival Time</th>
+<th>Burst Time</th>
+<th>Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td><input type="number" class="at-val" value="0" min="0"></td>
+<td><input type="number" class="bt-val" value="5" min="1"></td>
+<td><button class="btn btn-remove" onclick="deleteRow(this)">Remove</button></td>
+</tr>
+</tbody>
+</table>
+
+<div style="margin-bottom: 20px;">
+<button class="btn btn-add" onclick="addNewProcess()">Add Process</button>
+<button class="btn btn-calc" onclick="calculateSchedule()">Calculate</button>
+</div>
+
+<div id="resultsArea" class="results-section" style="display: none;">
+<h3>Calculation Results</h3>
+
+<div class="gantt-title">Gantt Chart Visualization:</div>
+<div id="ganttContainer" class="gantt-chart"></div>
+
+<table>
+<thead>
+<tr>
+<th>Process ID</th>
+<th>Arrival Time</th>
+<th>Burst Time</th>
+<th>Completion Time</th>
+<th>Turnaround Time</th>
+<th>Waiting Time</th>
+</tr>
+</thead>
+<tbody id="resultTableBody"></tbody>
+</table>
+
+<div class="averages-box">
+<p><strong>Average Turnaround Time:</strong> <span id="avgTAT">0</span></p>
+<p><strong>Average Waiting Time:</strong> <span id="avgWT">0</span></p>
+</div>
+</div>
+</div>
+
+<script>
+let processCounter = 1;
+
+function checkAlgorithm() {
+let selectedAlgo = document.getElementById("algorithm").value;
+let qGroup = document.getElementById("quantumGroup");
+
+if (selectedAlgo === "RR") {
+qGroup.style.display = "block";
+} else {
+qGroup.style.display = "none";
+}
+}
+
+function addNewProcess() {
+processCounter++;
+let table = document.getElementById("processInputTable").getElementsByTagName('tbody')[0];
+let newRow = table.insertRow();
+
+newRow.innerHTML = `
+<td>P${processCounter}</td>
+<td><input type="number" class="at-val" value="0" min="0"></td>
+<td><input type="number" class="bt-val" value="1" min="1"></td>
+<td><button class="btn btn-remove" onclick="deleteRow(this)">Remove</button></td>
+`;
+}
+
+function deleteRow(btn) {
+let row = btn.parentNode.parentNode;
+let tbody = row.parentNode;
+if (tbody.rows.length > 1) {
+tbody.removeChild(row);
+} else {
+alert("You must have at least one process.");
+}
+}
+
+function calculateSchedule() {
+let algo = document.getElementById("algorithm").value;
+let rows = document.querySelectorAll("#processInputTable tbody tr");
+let processList = [];
+
+for (let i = 0; i < rows.length; i++) {
+let arrival = parseInt(rows[i].querySelector(".at-val").value);
+let burst = parseInt(rows[i].querySelector(".bt-val").value);
+
+if (isNaN(arrival) || isNaN(burst)) {
+alert("Please fill in all input fields with valid numbers.");
+return;
+}
+
+processList.push({
+pid: "P" + (i + 1),
+at: arrival,
+bt: burst,
+ct: 0,
+tat: 0,
+wt: 0,
+remainingBt: burst
+});
+}
+
+if (algo === "FCFS") {
+runFCFS(processList);
+} else if (algo === "SJF") {
+runSJF(processList);
+} else if (algo === "RR") {
+runRR(processList);
+}
+}
+
+function displayResults(processes, ganttData) {
+document.getElementById("resultsArea").style.display = "block";
+
+let tbody = document.getElementById("resultTableBody");
+tbody.innerHTML = "";
+
+let sumTAT = 0;
+let sumWT = 0;
+
+for (let i = 0; i < processes.length; i++) {
+let p = processes[i];
+sumTAT += p.tat;
+sumWT += p.wt;
+
+let tr = document.createElement("tr");
+tr.innerHTML = `
+<td>${p.pid}</td>
+<td>${p.at}</td>
+<td>${p.bt}</td>
+<td>${p.ct}</td>
+<td>${p.tat}</td>
+<td>${p.wt}</td>
+`;
+tbody.appendChild(tr);
+}
+
+let avgTAT = (sumTAT / processes.length).toFixed(2);
+let avgWT = (sumWT / processes.length).toFixed(2);
+
+document.getElementById("avgTAT").innerText = avgTAT;
+document.getElementById("avgWT").innerText = avgWT;
+
+let ganttBox = document.getElementById("ganttContainer");
+ganttBox.innerHTML = "";
+
+for (let j = 0; j < ganttData.length; j++) {
+let g = ganttData[j];
+let div = document.createElement("div");
+div.className = "gantt-item";
+div.innerHTML = `${g.pid}<small>${g.start} - ${g.end}</small>`;
+ganttBox.appendChild(div);
+}
+}
+
+function runFCFS(procs) {
+procs.sort(function(a, b) { return a.at - b.at; });
+
+let timer = 0;
+let gantt = [];
+
+for (let i = 0; i < procs.length; i++) {
+let p = procs[i];
+if (timer < p.at) {
+timer = p.at;
+}
+
+let startTime = timer;
+timer += p.bt;
+
+p.ct = timer;
+p.tat = p.ct - p.at;
+p.wt = p.tat - p.bt;
+
+gantt.push({ pid: p.pid, start: startTime, end: timer });
+}
+
+displayResults(procs, gantt);
+}
+
+function runSJF(procs) {
+let count = procs.length;
+let completed = 0;
+let timer = 0;
+let doneFlags = new Array(count).fill(false);
+let gantt = [];
+
+while (completed < count) {
+let shortestIdx = -1;
+let minBurst = 999999;
+
+for (let i = 0; i < count; i++) {
+if (procs[i].at <= timer && !doneFlags[i]) {
+if (procs[i].bt < minBurst) {
+minBurst = procs[i].bt;
+shortestIdx = i;
+}
+}
+}
+
+if (shortestIdx !== -1) {
+let startTime = timer;
+timer += procs[shortestIdx].bt;
+
+procs[shortestIdx].ct = timer;
+procs[shortestIdx].tat = procs[shortestIdx].ct - procs[shortestIdx].at;
+procs[shortestIdx].wt = procs[shortestIdx].tat - procs[shortestIdx].bt;
+
+doneFlags[shortestIdx] = true;
+completed++;
+
+gantt.push({ pid: procs[shortestIdx].pid, start: startTime, end: timer });
+} else {
+timer++;
+}
+}
+
+displayResults(procs, gantt);
+}
+
+function runRR(procs) {
+let tqInput = parseInt(document.getElementById("timeQuantum").value);
+let tq = tqInput > 0 ? tqInput : 2;
+
+let timer = 0;
+let gantt = [];
+let readyQueue = [];
+let inQueue = new Array(procs.length).fill(false);
+
+procs.sort(function(a, b) { return a.at - b.at; });
+
+readyQueue.push(0);
+inQueue[0] = true;
+
+while (readyQueue.length > 0) {
+let idx = readyQueue.shift();
+let p = procs[idx];
+
+if (timer < p.at) {
+timer = p.at;
+}
+
+let timeSpent = Math.min(p.remainingBt, tq);
+let startTime = timer;
+timer += timeSpent;
+p.remainingBt -= timeSpent;
+
+gantt.push({ pid: p.pid, start: startTime, end: timer });
+
+for (let i = 0; i < procs.length; i++) {
+if (procs[i].at <= timer && !inQueue[i] && procs[i].remainingBt > 0) {
+readyQueue.push(i);
+inQueue[i] = true;
+}
+}
+
+if (p.remainingBt > 0) {
+readyQueue.push(idx);
+} else {
+p.ct = timer;
+p.tat = p.ct - p.at;
+p.wt = p.tat - p.bt;
+}
+
+if (readyQueue.length === 0) {
+for (let i = 0; i < procs.length; i++) {
+if (procs[i].remainingBt > 0) {
+readyQueue.push(i);
+inQueue[i] = true;
+break;
+}
+}
+}
+}
+
+displayResults(procs, gantt);
+}
+</script>
+</body>
+</html>
